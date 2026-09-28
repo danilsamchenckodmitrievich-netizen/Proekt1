@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Лаборатория Сириус</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FBFBF7; --ink:#1F2340; --muted:#6B6F85; --surf:#FFFFFF; --grid:#E6E4EC; --line:#E4E2EA;
+  --plum:#9B2D67; --teal:#50ADA8; --green:#367A55; --lime:#99CC42; --pink:#F8D3E8; --soft:#F3F1F7;
+  --brand:#5B3C9E;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16121A; --ink:#F1EEF6; --muted:#A39FB3; --surf:#211B29; --grid:#372F42; --line:#372F42;
+    --pink:#4A2340; --soft:#272031; --brand:#B79CF2; --plum:#D0568F;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16121A; --ink:#F1EEF6; --muted:#A39FB3; --surf:#211B29; --grid:#372F42; --line:#372F42;
+  --pink:#4A2340; --soft:#272031; --brand:#B79CF2; --plum:#D0568F;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);
+  font-family:'Golos Text',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:16px;line-height:1.5}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.wrap{max-width:760px;margin:0 auto}
+
+/* header */
+.top{display:flex;align-items:center;gap:10px;padding:16px 20px}
+.logo{display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;text-align:left}
+.logo svg{width:38px;height:auto;flex:none}
+.logo b{font-size:22px;font-weight:800;color:var(--brand);letter-spacing:-.2px}
+.logo span{font-size:22px;font-weight:500;color:var(--muted);margin-left:-4px}
+
+/* home */
+.hero{padding:18px 20px 6px}
+.hero h1{margin:0;font-size:clamp(34px,9vw,52px);line-height:1.05;font-weight:800;letter-spacing:-1px}
+.hero p{margin:12px 0 0;color:var(--muted);font-size:18px;max-width:34ch}
+.progress{margin:20px 20px 4px;display:flex;align-items:center;gap:14px;font-weight:600;color:var(--muted);font-size:15px}
+.bar{flex:1;height:10px;border-radius:6px;background:var(--grid);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--lime);border-radius:6px;transition:width .4s}
+.chips{display:flex;gap:8px;padding:14px 20px;overflow-x:auto;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:0;border-radius:999px;padding:9px 16px;background:var(--soft);font-weight:600;font-size:15px;color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.cards{display:grid;gap:16px;padding:6px 20px 40px}
+@media(min-width:640px){.cards{grid-template-columns:1fr 1fr}}
+.card{position:relative;border-radius:30px;padding:24px;min-height:300px;display:flex;flex-direction:column;
+  background:var(--c);color:#fff;text-align:left;border:0;width:100%}
+.card .pb{height:8px;width:56%;border-radius:5px;background:rgba(255,255,255,.28);margin:0 0 22px 8px;overflow:hidden}
+.card .pb i{display:block;height:100%;width:0;background:var(--lime);border-radius:5px}
+.card.seen .pb i{width:100%}
+.tag{align-self:flex-start;background:rgba(255,255,255,.2);border-radius:999px;padding:6px 14px;font-size:14px;font-weight:600}
+.card h2{margin:14px 0 8px;font-size:28px;line-height:1.12;font-weight:800;letter-spacing:-.4px}
+.card p{margin:0;opacity:.88;font-size:16px}
+.card .foot{margin-top:auto;padding-top:22px;display:flex;align-items:flex-end;gap:12px;justify-content:space-between}
+.card .meta{font-size:15px;opacity:.8;display:flex;align-items:center;gap:8px}
+.go{background:var(--lime);color:#1B2A0A;font-weight:700;font-size:18px;border-radius:16px;padding:14px 28px;border:0;flex:1;text-align:center;max-width:220px}
+
+/* lab */
+.labhead{background:var(--lab);color:#fff;padding:14px 20px 78px}
+.back{background:rgba(255,255,255,.18);border:0;border-radius:999px;color:#fff;font-weight:600;padding:8px 16px 8px 12px;display:inline-flex;gap:6px;align-items:center;font-size:15px}
+.labhead h1{margin:18px 0 6px;font-size:clamp(30px,8vw,44px);line-height:1.08;font-weight:800;letter-spacing:-.7px}
+.labhead p{margin:0;opacity:.9;max-width:40ch}
+.labhead .tag{margin-top:16px;display:inline-block}
+.sheet{margin-top:-58px;position:relative;padding:0 14px 60px}
+.stage{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surf);border-radius:26px;
+  padding:8px;box-shadow:0 2px 0 var(--line), 0 12px 30px -18px rgba(31,35,64,.5)}
+.stage canvas{display:block;width:100%;aspect-ratio:640/400;border-radius:20px}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin:16px 6px 4px}
+.btn{border-radius:16px;padding:12px 20px;font-weight:700;border:2px solid var(--line);background:var(--surf)}
+.btn.main{background:var(--lime);border-color:var(--lime);color:#1B2A0A}
+.outs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 6px}
+.out{background:var(--soft);border-radius:18px;padding:12px 14px}
+.out small{display:block;color:var(--muted);font-size:13px;line-height:1.25}
+.out b{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+.sheet h2{font-size:24px;font-weight:800;letter-spacing:-.4px;margin:26px 6px 12px}
+.presets{display:flex;gap:8px;flex-wrap:wrap;margin:0 6px 10px}
+.presets .chip{border:2px solid var(--line);background:var(--surf)}
+.ctl{background:var(--surf);border:2px solid var(--line);border-radius:22px;padding:14px 16px;margin:10px 6px}
+.ctl .r{display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;font-size:15px}
+.val{background:var(--pink);border-radius:999px;padding:3px 12px;font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+input[type=range]{width:100%;margin:12px 0 2px;height:28px;accent-color:var(--lab)}
+.seg{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.seg button{flex:1;border:2px solid var(--line);background:var(--soft);border-radius:14px;padding:10px;font-weight:600}
+.seg button[aria-pressed="true"]{background:var(--lab);border-color:var(--lab);color:#fff}
+.note{border-radius:26px;padding:20px 22px;margin:14px 6px;background:var(--pink)}
+.note b{font-weight:800}
+.note.f{background:var(--soft)}
+.note .fm{font-size:20px;font-weight:600;margin:6px 0;font-variant-numeric:tabular-nums}
+.note ul,.note ol{margin:8px 0 0;padding-left:20px}
+.note li{margin:6px 0}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+(function(){
+'use strict';
+const W=640,H=400;
+const $=(s,r=document)=>r.querySelector(s);
+const f1=(x,d=1)=>Number(x).toFixed(d).replace('.',',');
+const rad=d=>d*Math.PI/180, deg=r=>r*180/Math.PI;
+const rgb=h=>{h=h.replace('#','');return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]};
+const rgba=(h,a)=>{const c=rgb(h);return `rgba(${c[0]},${c[1]},${c[2]},${a})`};
+const mixc=(a,b,t)=>{const x=rgb(a),y=rgb(b);return `rgb(${Math.round(x[0]+(y[0]-x[0])*t)},${Math.round(x[1]+(y[1]-x[1])*t)},${Math.round(x[2]+(y[2]-x[2])*t)})`};
+const gauss=()=>{let u=0,v=0;while(!u)u=Math.random();v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)};
+const FONT="'Golos Text',system-ui,sans-serif";
+
+let C={};
+function readColors(){
+  const cs=getComputedStyle(document.documentElement);
+  ['ink','muted','surf','grid','plum','teal','green','lime','soft','pink'].forEach(k=>C[k]=cs.getPropertyValue('--'+k).trim());
+}
+function arrow(g,x1,y1,x2,y2,col,w){
+  w=w||3;const a=Math.atan2(y2-y1,x2-x1),h=9+w;
+  g.strokeStyle=col;g.fillStyle=col;g.lineWidth=w;g.lineCap='round';
+  g.beginPath();g.moveTo(x1,y1);g.lineTo(x2-Math.cos(a)*h*.6,y2-Math.sin(a)*h*.6);g.stroke();
+  g.beginPath();g.moveTo(x2,y2);g.lineTo(x2-h*Math.cos(a-.42),y2-h*Math.sin(a-.42));g.lineTo(x2-h*Math.cos(a+.42),y2-h*Math.sin(a+.42));g.closePath();g.fill();
+}
+function txt(g,s,x,y,o){
+  o=o||{};g.font=`${o.w||600} ${o.s||14}px ${FONT}`;g.fillStyle=o.c||C.ink;g.textAlign=o.a||'left';g.textBaseline=o.b||'alphabetic';g.fillText(s,x,y);
+}
+function graph(g,x,y,w,h,hist,vmax,col,label){
+  g.save();
+  g.fillStyle=C.soft;g.beginPath();g.roundRect(x,y,w,h,12);g.fill();
+  g.strokeStyle=C.grid;g.lineWidth=1.5;g.beginPath();g.moveTo(x+8,y+h/2);g.lineTo(x+w-8,y+h/2);g.stroke();
+  if(hist.length>1){
+    const t1=hist[hist.length-1].t,t0=t1-6;
+    g.beginPath();g.rect(x,y,w,h);g.clip();
+    g.strokeStyle=col;g.lineWidth=3;g.lineJoin='round';g.beginPath();
+    let first=true;
+    for(const p of hist){const px=x+8+(p.t-t0)/6*(w-16),py=y+h/2-Math.max(-1.2,Math.min(1.2,p.v/vmax))*(h/2-10);
+      if(first){g.moveTo(px,py);first=false}else g.lineTo(px,py)}
+    g.stroke();
+  }
+  g.restore();
+  txt(g,label,x+10,y+16,{s:12,c:C.muted,w:500});
+}
+function pushHist(S,t,v){S.hist.push({t,v});while(S.hist.length&&S.hist[0].t<t-6.2)S.hist.shift();}
+
+/* ===================== LABS ===================== */
+const LABS=[];
+
+/* 1. Бросок под углом */
+LABS.push({
+  id:'projectile',title:'Бросок под углом',cat:'Механика',color:'#9B2D67',
+  short:'Как летит тело, брошенное под углом к горизонту. Меняйте скорость, угол и даже планету.',
+  params:[
+    {id:'v',label:'Начальная скорость',min:5,max:40,step:1,val:20,unit:'м/с'},
+    {id:'a',label:'Угол броска',min:5,max:85,step:1,val:45,unit:'°'},
+    {id:'h',label:'Высота старта',min:0,max:30,step:1,val:0,unit:'м'},
+    {id:'g',label:'Ускорение свободного падения',min:1,max:25,step:0.1,val:9.8,unit:'м/с²',d:1}
+  ],
+  presets:[['Земля',{g:9.8}],['Луна',{g:1.6}],['Марс',{g:3.7}],['Юпитер',{g:24.8}]],
+  restartOn:'all',launch:true,
+  def:'Тело, брошенное под углом к горизонту, одновременно движется равномерно вдоль земли и равноускоренно по вертикали. Траектория получается параболой.',
+  formulas:['x = v₀·cos α · t','y = h + v₀·sin α · t − g·t²/2'],
+  tryit:['Поставьте угол 45° — на ровной земле дальность будет максимальной.','Сравните углы 30° и 60°: дальность почти одинаковая.','Переключитесь на Луну: как изменилась дальность и время полёта?'],
+  init(S,P){S.t=0;S.trail=[];S.x=0;S.y=P.h;S.done=false;S.acc=0;S.vx=P.v*Math.cos(rad(P.a));S.vy=P.v*Math.sin(rad(P.a));},
+  calc(P){const vy=P.v*Math.sin(rad(P.a)),vx=P.v*Math.cos(rad(P.a));const T=(vy+Math.sqrt(vy*vy+2*P.g*P.h))/P.g;return{T,R:vx*T,Hm:P.h+vy*vy/(2*P.g)}},
+  step(S,P,dt){
+    if(S.done)return;const c=this.calc(P);S.t=Math.min(S.t+dt,c.T);
+    const vx=P.v*Math.cos(rad(P.a)),vy0=P.v*Math.sin(rad(P.a));
+    S.x=vx*S.t;S.y=Math.max(0,P.h+vy0*S.t-P.g*S.t*S.t/2);S.vx=vx;S.vy=vy0-P.g*S.t;
+    S.acc+=dt;if(S.acc>0.03){S.acc=0;S.trail.push([S.x,S.y])}
+    if(S.t>=c.T){S.done=true;S.trail.push([S.x,0])}
+  },
+  draw(g,S,P){
+    const c=this.calc(P),ox=44,gy=H-38;
+    const k=Math.min((W-90)/Math.max(c.R,1),(gy-46)/Math.max(c.Hm,1));
+    const X=x=>ox+x*k,Y=y=>gy-y*k;
+    // сетка
+    const steps=[1,2,5,10,20,50,100,200];let st=steps.find(s=>c.R/s<=8)||200;
+    g.strokeStyle=C.grid;g.lineWidth=1;g.fillStyle=C.muted;
+    for(let x=0;x<=c.R*1.05+st;x+=st){g.beginPath();g.moveTo(X(x),gy);g.lineTo(X(x),46);g.stroke();txt(g,x+' м',X(x),gy+20,{s:11,a:'center',c:C.muted,w:500})}
+    // земля
+    g.fillStyle=C.green;g.fillRect(0,gy,W,H-gy);
+    // высота старта
+    if(P.h>0){g.fillStyle=C.soft;g.fillRect(ox-30,Y(P.h),30,P.h*k);g.strokeStyle=C.ink;g.lineWidth=2;g.strokeRect(ox-30,Y(P.h),30,P.h*k)}
+    // предсказанная траектория
+    g.setLineDash([6,8]);g.strokeStyle=C.muted;g.lineWidth=2;g.beginPath();
+    for(let i=0;i<=80;i++){const t=c.T*i/80,x=P.v*Math.cos(rad(P.a))*t,y=Math.max(0,P.h+P.v*Math.sin(rad(P.a))*t-P.g*t*t/2);i?g.lineTo(X(x),Y(y)):g.moveTo(X(x),Y(y))}
+    g.stroke();g.setLineDash([]);
+    // след
+    g.strokeStyle=LABC(this);g.lineWidth=4;g.lineJoin='round';g.beginPath();
+    g.moveTo(X(0),Y(P.h));for(const p of S.trail)g.lineTo(X(p[0]),Y(p[1]));g.lineTo(X(S.x),Y(S.y));g.stroke();
+    // мяч и скорость
+    g.fillStyle=C.plum;g.beginPath();g.arc(X(S.x),Y(S.y),9,0,7);g.fill();
+    g.strokeStyle=C.surf;g.lineWidth=3;g.stroke();
+    if(!S.done){arrow(g,X(S.x),Y(S.y),X(S.x)+S.vx*2.2,Y(S.y)-S.vy*2.2,C.teal,3);}
+    // высота
+    txt(g,'t = '+f1(S.t,2)+' с',W-14,30,{a:'right',s:15,w:700});
+    txt(g,'y = '+f1(S.y)+' м',W-14,50,{a:'right',s:13,c:C.muted,w:500});
+  },
+  outs(S,P){const c=this.calc(P);return[['Дальность',f1(c.R)+' м'],['Максимальная высота',f1(c.Hm)+' м'],['Время полёта',f1(c.T,2)+' с'],['Скорость сейчас',f1(Math.hypot(S.vx,S.vy))+' м/с']]}
+});
+
+/* 2. Маятник */
+LABS.push({
+  id:'pendulum',title:'Математический маятник',cat:'Колебания',color:'#3E8E8A',
+  short:'Груз на нити качается вперёд и назад. От чего зависит период колебаний?',
+  params:[
+    {id:'L',label:'Длина нити',min:0.3,max:3,step:0.1,val:1.5,unit:'м',d:1},
+    {id:'g',label:'Ускорение свободного падения',min:1,max:25,step:0.1,val:9.8,unit:'м/с²',d:1},
+    {id:'a0',label:'Начальное отклонение',min:5,max:80,step:1,val:30,unit:'°'},
+    {id:'c',label:'Трение (затухание)',min:0,max:1,step:0.01,val:0.05,unit:'',d:2}
+  ],
+  presets:[['Земля',{g:9.8}],['Луна',{g:1.6}],['Без трения',{c:0}],['Секундный',{L:1,g:9.8}]],
+  restartOn:['a0'],
+  def:'Маятник — тело, которое колеблется на нити. Период зависит от длины нити и ускорения свободного падения, но почти не зависит от массы и небольшого размаха.',
+  formulas:['T = 2π·√(L / g)','f = 1 / T'],
+  tryit:['Увеличьте длину нити в 4 раза — период вырастет ровно вдвое.','Уберите трение и сравните отклонение 10° и 70°.','Отнесите маятник на Луну: как изменится период?'],
+  init(S,P){S.th=rad(P.a0);S.w=0;S.t=0;S.hist=[];S.per=null;S.lastC=null},
+  step(S,P,dt){
+    const n=10,h=dt/n;
+    for(let i=0;i<n;i++){const al=-(P.g/P.L)*Math.sin(S.th)-P.c*3*S.w;const wo=S.w;S.w+=al*h;S.th+=S.w*h;S.t+=h;
+      if(wo<0&&S.w>=0){if(S.lastC!==null)S.per=S.t-S.lastC;S.lastC=S.t}}
+    pushHist(S,S.t,S.th);
+  },
+  draw(g,S,P){
+    const px=250,py=44,k=70,Lp=P.L*k;
+    g.strokeStyle=C.grid;g.lineWidth=2;g.setLineDash([5,7]);
+    g.beginPath();g.moveTo(px,py);g.lineTo(px,py+Lp+30);g.stroke();
+    const A=rad(P.a0);g.beginPath();g.arc(px,py,Lp,Math.PI/2-A,Math.PI/2+A);g.stroke();g.setLineDash([]);
+    const bx=px+Lp*Math.sin(S.th),by=py+Lp*Math.cos(S.th);
+    g.strokeStyle=C.ink;g.lineWidth=2.5;g.beginPath();g.moveTo(px,py);g.lineTo(bx,by);g.stroke();
+    g.fillStyle=C.ink;g.fillRect(px-46,py-12,92,10);
+    g.fillStyle=C.teal;g.beginPath();g.arc(bx,by,17,0,7);g.fill();g.strokeStyle=C.surf;g.lineWidth=3;g.stroke();
+    g.fillStyle=C.ink;g.beginPath();g.arc(px,py,4,0,7);g.fill();
+    graph(g,470,18,152,120,S.hist,rad(P.a0)||1,C.teal,'угол отклонения, 6 с');
+    txt(g,'θ = '+f1(deg(S.th))+'°',24,H-18,{s:15,w:700});
+  },
+  outs(S,P){return[['Период (по формуле)',f1(2*Math.PI*Math.sqrt(P.L/P.g),2)+' с'],['Период (измерен)',S.per?f1(S.per,2)+' с':'ждём…'],['Частота',f1(1/(2*Math.PI*Math.sqrt(P.L/P.g)),2)+' Гц'],['Скорость груза',f1(Math.abs(S.w)*P.L)+' м/с']]}
+});
+
+/* 3. Пружинный маятник */
+LABS.push({
+  id:'spring',title:'Пружинный маятник',cat:'Колебания',color:'#367A55',
+  short:'Груз на пружине колеблется по столу. Жёсткость и масса меняют ритм.',
+  params:[
+    {id:'m',label:'Масса груза',min:0.1,max:5,step:0.1,val:1,unit:'кг',d:1},
+    {id:'k',label:'Жёсткость пружины',min:5,max:200,step:1,val:50,unit:'Н/м'},
+    {id:'A',label:'Начальное растяжение',min:0.2,max:1.4,step:0.05,val:0.8,unit:'м',d:2},
+    {id:'c',label:'Трение',min:0,max:5,step:0.1,val:0.3,unit:'кг/с',d:1}
+  ],
+  presets:[['Лёгкий и жёсткий',{m:0.3,k:150}],['Тяжёлый и мягкий',{m:4,k:20}],['Без трения',{c:0}]],
+  restartOn:['A'],
+  def:'При колебаниях груза на пружине сила упругости всё время возвращает его к положению равновесия. Чем тяжелее груз, тем медленнее колебания, а чем жёстче пружина — тем быстрее.',
+  formulas:['F = −k·x','T = 2π·√(m / k)'],
+  tryit:['Увеличьте массу вчетверо — период вырастет вдвое.','Поставьте трение 0: энергия сохраняется, размах не падает.','Найдите жёсткость, при которой период равен 1 с.'],
+  init(S,P){S.x=P.A;S.v=0;S.t=0;S.hist=[]},
+  step(S,P,dt){const n=12,h=dt/n;for(let i=0;i<n;i++){const a=(-P.k*S.x-P.c*S.v)/P.m;S.v+=a*h;S.x+=S.v*h;S.t+=h}pushHist(S,S.t,S.x)},
+  draw(g,S,P){
+    const eq=350,k=100,cx=eq+S.x*k,bw=44+P.m*9,bx=cx-bw/2,ty=190;
+    g.fillStyle=C.ink;g.fillRect(24,90,14,110);
+    g.fillStyle=C.grid;g.fillRect(24,ty,W-48,8);
+    g.setLineDash([4,6]);g.strokeStyle=C.muted;g.lineWidth=1.5;g.beginPath();g.moveTo(eq,60);g.lineTo(eq,ty+30);g.stroke();g.setLineDash([]);
+    txt(g,'равновесие',eq,54,{a:'center',s:12,c:C.muted,w:500});
+    // пружина
+    const x0=38,x1=bx,cy=ty-34,n=12;g.strokeStyle=C.ink;g.lineWidth=3;g.lineJoin='round';g.beginPath();g.moveTo(x0,cy);
+    g.lineTo(x0+10,cy);const len=x1-x0-20;for(let i=0;i<n;i++){const xa=x0+10+len*(i+.5)/n;g.lineTo(xa,cy+(i%2?16:-16))}
+    g.lineTo(x1-10,cy);g.lineTo(x1,cy);g.stroke();
+    g.fillStyle=C.green;g.beginPath();g.roundRect(bx,ty-bw+8,bw,bw-8,8);g.fill();
+    txt(g,f1(P.m)+' кг',cx,ty-bw/2+8,{a:'center',s:13,c:'#fff',w:700,b:'middle'});
+    arrow(g,cx,ty-bw-10,cx-Math.max(-60,Math.min(60,P.k*S.x*0.5)),ty-bw-10,C.plum,3);
+    txt(g,'F упр',cx,ty-bw-20,{a:'center',s:12,c:C.plum,w:600});
+    graph(g,40,240,W-80,140,S.hist,P.A||1,C.green,'координата x, 6 с');
+  },
+  outs(S,P){const T=2*Math.PI*Math.sqrt(P.m/P.k);const E=0.5*P.k*S.x*S.x+0.5*P.m*S.v*S.v;return[['Период',f1(T,2)+' с'],['Частота',f1(1/T,2)+' Гц'],['Смещение x',f1(S.x,2)+' м'],['Полная энергия',f1(E)+' Дж']]}
+});
+
+/* 4. Преломление света */
+LABS.push({
+  id:'refraction',title:'Преломление света',cat:'Свет',color:'#5B3C9E',
+  short:'Луч меняет направление на границе двух сред. Попробуйте добиться полного отражения.',
+  params:[
+    {id:'n1',label:'Показатель преломления среды 1 (сверху)',min:1,max:2.5,step:0.01,val:1,unit:'',d:2},
+    {id:'n2',label:'Показатель преломления среды 2 (снизу)',min:1,max:2.5,step:0.01,val:1.5,unit:'',d:2},
+    {id:'a',label:'Угол падения',min:0,max:89,step:1,val:40,unit:'°'}
+  ],
+  presets:[['Воздух → вода',{n1:1,n2:1.33}],['Воздух → стекло',{n1:1,n2:1.5}],['Вода → воздух',{n1:1.33,n2:1}],['Алмаз → воздух',{n1:2.42,n2:1,a:30}]],
+  restartOn:[],
+  def:'Преломление — изменение направления светового луча при переходе из одной среды в другую. Причина в том, что в разных средах скорость света разная. Если луч идёт из оптически более плотной среды в менее плотную и угол слишком велик, преломлённого луча нет — наступает полное отражение.',
+  formulas:['n₁·sin θ₁ = n₂·sin θ₂','n = c / v','sin θпред = n₂ / n₁  (при n₁ > n₂)'],
+  tryit:['Пустите луч из воды в воздух и увеличивайте угол падения до полного отражения.','Найдите предельный угол для алмаза — он очень мал, поэтому алмаз так играет.','Сделайте n₁ = n₂: луч не меняет направления.'],
+  init(S){S.o=0},
+  step(S,P,dt){S.o=(S.o+dt*40)%18},
+  calc(P){const t1=rad(P.a),s2=P.n1*Math.sin(t1)/P.n2,tir=s2>1+1e-9,t2=tir?0:Math.asin(Math.min(1,s2));
+    const ci=Math.cos(t1),ct=Math.cos(t2);let R=1;
+    if(!tir){const rs=Math.pow((P.n1*ci-P.n2*ct)/(P.n1*ci+P.n2*ct),2),rp=Math.pow((P.n1*ct-P.n2*ci)/(P.n1*ct+P.n2*ci),2);R=(rs+rp)/2}
+    return{t1,t2,tir,R,crit:P.n1>P.n2?Math.asin(P.n2/P.n1):null}},
+  draw(g,S,P){
+    const cx=W/2+10,cy=200,L=165,c=this.calc(P);
+    g.fillStyle=rgba(C.teal,0.05+0.3*(P.n1-1)/1.5);g.fillRect(0,0,W,cy);
+    g.fillStyle=rgba(C.teal,0.05+0.3*(P.n2-1)/1.5);g.fillRect(0,cy,W,H-cy);
+    g.strokeStyle=C.ink;g.lineWidth=3;g.beginPath();g.moveTo(0,cy);g.lineTo(W,cy);g.stroke();
+    g.setLineDash([5,7]);g.strokeStyle=C.muted;g.lineWidth=1.5;g.beginPath();g.moveTo(cx,cy-L-14);g.lineTo(cx,cy+L+14);g.stroke();g.setLineDash([]);
+    txt(g,'n₁ = '+f1(P.n1,2),16,26,{s:16,w:700});txt(g,'n₂ = '+f1(P.n2,2),16,cy+30,{s:16,w:700});
+    txt(g,'нормаль',cx+6,26,{s:12,c:C.muted,w:500});
+    const ray=(x1,y1,x2,y2,al,col)=>{g.save();g.globalAlpha=al;g.strokeStyle=col;g.lineWidth=5;g.lineCap='butt';g.setLineDash([12,6]);g.lineDashOffset=-S.o;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();g.restore()};
+    const s1=Math.sin(c.t1),c1=Math.cos(c.t1);
+    ray(cx-L*s1,cy-L*c1,cx,cy,1,C.plum);
+    ray(cx,cy,cx+L*s1,cy-L*c1,c.tir?1:Math.min(1,.18+c.R*2.5),C.plum);
+    if(!c.tir)ray(cx,cy,cx+L*Math.sin(c.t2),cy+L*Math.cos(c.t2),1,C.plum);
+    // дуги
+    g.strokeStyle=C.ink;g.lineWidth=2;
+    g.beginPath();g.arc(cx,cy,58,-Math.PI/2-c.t1,-Math.PI/2);g.stroke();
+    txt(g,'θ₁ '+Math.round(deg(c.t1))+'°',cx-70,cy-62,{s:14,a:'right',w:700});
+    if(!c.tir){g.beginPath();g.arc(cx,cy,58,Math.PI/2-c.t2,Math.PI/2);g.stroke();txt(g,'θ₂ '+f1(deg(c.t2))+'°',cx+72,cy+76,{s:14,w:700})}
+    else{g.fillStyle=C.plum;g.beginPath();g.roundRect(W-236,cy+22,220,40,14);g.fill();txt(g,'Полное отражение',W-126,cy+48,{s:16,a:'center',c:'#fff',w:700})}
+  },
+  outs(S,P){const c=this.calc(P);return[['Угол преломления',c.tir?'нет луча':f1(deg(c.t2))+'°'],['Отражается',f1(c.R*100,c.R<.1?1:0)+' % света'],['Предельный угол',c.crit?f1(deg(c.crit))+'°':'не бывает'],['Скорость света в среде 2',Math.round(299792/P.n2/1000)*1000+' км/с']]}
+});
+
+/* 5. Тепловое движение и давление газа */
+LABS.push({
+  id:'gas',title:'Тепловое движение молекул',cat:'Тепловые явления',color:'#C4526B',
+  short:'Газ — это хаос быстрых частиц. Нагревайте, сжимайте и следите за давлением.',
+  params:[
+    {id:'T',label:'Температура',min:50,max:800,step:10,val:300,unit:'К'},
+    {id:'N',label:'Число молекул',min:10,max:150,step:5,val:60,unit:''},
+    {id:'V',label:'Объём сосуда',min:30,max:100,step:1,val:100,unit:'%'}
+  ],
+  presets:[['Холод, 100 К',{T:100}],['Комнатная, 300 К',{T:300}],['Жара, 700 К',{T:700}],['Сжать вдвое',{V:50}]],
+  restartOn:[],
+  def:'Все вещества состоят из молекул, которые непрерывно и беспорядочно движутся. Чем выше температура, тем быстрее молекулы. Давление газа — результат ударов молекул о стенки сосуда.',
+  formulas:['p = n·k·T','v̄ ≈ √(8kT / πm)','p·V / T = const'],
+  tryit:['Нагрейте газ вдвое (в кельвинах): как изменилось давление?','Сожмите объём вдвое при постоянной температуре.','Добавьте молекул — давление растёт, а скорость не меняется. Почему?'],
+  init(S){S.parts=[];S.p=0},
+  step(S,P,dt){
+    const base=6*Math.sqrt(P.T),xr=30+580*P.V/100,r=4,x0=34,y0=34,y1=366;
+    while(S.parts.length<P.N)S.parts.push({x:x0+Math.random()*(xr-x0-8),y:y0+Math.random()*(y1-y0),gx:gauss(),gy:gauss()});
+    while(S.parts.length>P.N)S.parts.pop();
+    let imp=0;
+    for(const p of S.parts){
+      p.x+=p.gx*base*dt;p.y+=p.gy*base*dt;
+      if(p.x<x0){p.x=x0;p.gx=Math.abs(p.gx)}
+      if(p.x>xr-r){p.x=xr-r;if(p.gx>0)imp+=2*p.gx*base;p.gx=-Math.abs(p.gx)}
+      if(p.y<y0){p.y=y0;p.gy=Math.abs(p.gy)}
+      if(p.y>y1){p.y=y1;p.gy=-Math.abs(p.gy)}
+    }
+    S.p+=((imp/dt/340)-S.p)*Math.min(1,dt*1.5);
+  },
+  draw(g,S,P){
+    const xr=30+580*P.V/100;
+    g.fillStyle=C.soft;g.beginPath();g.roundRect(30,30,xr-30,340,6);g.fill();
+    g.strokeStyle=C.ink;g.lineWidth=4;g.lineJoin='round';g.beginPath();g.moveTo(xr,30);g.lineTo(30,30);g.lineTo(30,370);g.lineTo(xr,370);g.stroke();
+    g.fillStyle=C.lime;g.fillRect(xr-2,26,10,348);g.fillStyle=C.ink;g.fillRect(xr+8,190,W-xr,10);
+    const base=6*Math.sqrt(P.T);
+    for(const p of S.parts){const sp=Math.hypot(p.gx,p.gy)*base/(6*Math.sqrt(300)*1.4);const t=Math.max(0,Math.min(1,sp*0.7));
+      g.fillStyle=mixc('#50ADA8','#C4245F',t);g.beginPath();g.arc(p.x,p.y,5,0,7);g.fill()}
+    txt(g,'поршень',Math.min(W-40,xr+22),182,{s:12,c:C.muted,w:500,a:'left'});
+  },
+  outs(S,P){return[['Давление (усл. ед.)',String(Math.round(S.p*10))],['Средняя скорость N₂',Math.round(476*Math.sqrt(P.T/300))+' м/с'],['Температура',(P.T-273)+' °C'],['Объём',P.V+' %']]}
+});
+
+/* 6. Закон Архимеда */
+LABS.push({
+  id:'archimedes',title:'Закон Архимеда',cat:'Механика',color:'#3F6FB5',
+  short:'Почему одни тела плавают, а другие тонут? Сравните плотность тела и жидкости.',
+  params:[
+    {id:'rho',label:'Плотность тела',min:200,max:8000,step:50,val:600,unit:'кг/м³'},
+    {id:'rl',label:'Плотность жидкости',min:700,max:14000,step:50,val:1000,unit:'кг/м³'},
+    {id:'V',label:'Объём тела',min:1,max:8,step:0.5,val:3,unit:'дм³',d:1}
+  ],
+  presets:[['Дерево в воде',{rho:600,rl:1000}],['Лёд в воде',{rho:900,rl:1000}],['Камень в воде',{rho:2500,rl:1000}],['Сталь в ртути',{rho:7800,rl:13600}],['Лёд в нефти',{rho:900,rl:800}]],
+  restartOn:'all',launch:true,
+  def:'На тело, погружённое в жидкость, действует выталкивающая сила, равная весу вытесненной жидкости. Тело плавает, если его плотность меньше плотности жидкости, и тонет, если больше.',
+  formulas:['Fₐ = ρж · g · Vпогр','Fт = ρт · g · V','плавает, если ρт < ρж'],
+  tryit:['Подберите плотность тела так, чтобы оно висело в толще воды.','Опустите дерево в ртуть и сравните с водой: глубина погружения.','Почему стальной корабль плавает, если сталь плотнее воды?'],
+  init(S,P){const s=40*Math.cbrt(P.V);S.s=s;S.y=170-s-30;S.v=0;S.t=0},
+  step(S,P,dt){
+    const s=S.s,surf=170,bot=360;S.t+=dt;
+    const n=4,h=dt/n;
+    for(let i=0;i<n;i++){
+      const f=Math.max(0,Math.min(1,(S.y+s-surf)/s));
+      const a=420*(1-P.rl*f/P.rho)-5*S.v;S.v+=a*h;S.y+=S.v*h;
+      if(S.y>bot-s){S.y=bot-s;S.v=0}
+    }
+    S.f=Math.max(0,Math.min(1,(S.y+s-surf)/s));
+  },
+  draw(g,S,P){
+    const surf=170,bot=360,tl=140,tr=500,s=S.s,bx=(tl+tr)/2-s/2;
+    // жидкость
+    const al=0.18+0.35*Math.min(1,P.rl/14000);
+    g.fillStyle=rgba('#3F6FB5',al);
+    g.beginPath();g.moveTo(tl,surf);for(let x=tl;x<=tr;x+=8)g.lineTo(x,surf+Math.sin(x*0.05+S.t*2)*1.6*(Math.abs(S.v)>5?2:1));g.lineTo(tr,bot);g.lineTo(tl,bot);g.closePath();g.fill();
+    // тело
+    g.fillStyle=C.plum;g.beginPath();g.roundRect(bx,S.y,s,s,6);g.fill();
+    g.fillStyle=rgba('#3F6FB5',al*0.9);const sub=S.f*s;if(sub>0){g.beginPath();g.rect(bx,S.y+s-sub,s,sub);g.fill()}
+    txt(g,f1(P.rho,0)+' кг/м³',bx+s/2,S.y+s/2+4,{a:'center',s:12,c:'#fff',w:700});
+    // сосуд
+    g.strokeStyle=C.ink;g.lineWidth=5;g.lineJoin='round';g.beginPath();g.moveTo(tl,110);g.lineTo(tl,bot);g.lineTo(tr,bot);g.lineTo(tr,110);g.stroke();
+    // силы
+    const Ft=P.rho*9.8*P.V/1000,Fa=P.rl*9.8*P.V*S.f/1000,sc=v=>14+70*Math.min(1,v/250);
+    const cx=bx+s/2,cy=S.y+s/2;
+    arrow(g,cx,cy,cx,cy+sc(Ft),C.plum,4);arrow(g,cx,cy,cx,cy-sc(Fa),C.teal,4);
+    txt(g,'Fт',cx+10,cy+sc(Ft)-4,{s:13,c:C.plum,w:700});
+    if(Fa>0.5)txt(g,'Fₐ',cx+10,cy-sc(Fa)+14,{s:13,c:C.teal,w:700});
+    txt(g,'ρ жидкости: '+f1(P.rl,0)+' кг/м³',tr+16,140,{s:13,w:600});
+  },
+  outs(S,P){const Ft=P.rho*9.8*P.V/1000,Fa=P.rl*9.8*P.V*(S.f||0)/1000;const v=P.rho<P.rl?'плавает':P.rho>P.rl?'тонет':'взвешено';return[['Сила тяжести',f1(Ft)+' Н'],['Сила Архимеда',f1(Fa)+' Н'],['Погружено',Math.round((S.f||0)*100)+' %'],['Итог',v]]}
+});
+
+/* 7. Интерференция волн */
+LABS.push({
+  id:'waves',title:'Интерференция волн',cat:'Волны',color:'#B23B7A',
+  short:'Две волны накладываются друг на друга: где-то усиливаются, а где-то гасят друг друга.',
+  params:[
+    {id:'d',label:'Расстояние между источниками',min:2,max:20,step:0.5,val:8,unit:'см',d:1},
+    {id:'lam',label:'Длина волны',min:1.5,max:8,step:0.1,val:3,unit:'см',d:1},
+    {id:'f',label:'Частота',min:0.3,max:2.5,step:0.1,val:1,unit:'Гц',d:1},
+    {id:'mode',label:'Источники',type:'seg',val:'2',options:[['2','Два'],['1','Один']]}
+  ],
+  presets:[['Близкие источники',{d:4}],['Далёкие источники',{d:16}],['Короткие волны',{lam:1.6}]],
+  restartOn:[],
+  def:'Интерференция — сложение волн, при котором в одних точках колебания усиливаются, а в других ослабляются. Усиление там, где разность хода равна целому числу длин волн; гашение — где полуцелому.',
+  formulas:['v = λ · f','максимум: Δ = m·λ','минимум: Δ = (m + ½)·λ'],
+  tryit:['Раздвигайте источники — число «лучей» усиления растёт.','Уменьшайте длину волны: картина становится гуще.','Выключите один источник и сравните с двумя.'],
+  init(S){S.t=0;S.off=document.createElement('canvas');S.off.width=160;S.off.height=100;S.oc=S.off.getContext('2d');S.img=S.oc.createImageData(160,100)},
+  step(S,P,dt){S.t+=dt},
+  draw(g,S,P){
+    const pxcm=8,hd=P.d*pxcm/2,lam=P.lam*pxcm,two=P.mode==='2';
+    const s1=[60,200-hd],s2=[60,200+hd],bg=rgb(C.surf),pl=rgb('#9B2D67'),te=rgb('#50ADA8');
+    const d=S.img.data;let i=0;
+    for(let j=0;j<100;j++)for(let x=0;x<160;x++){
+      const px=x*4+2,py=j*4+2;
+      const r1=Math.hypot(px-s1[0],py-s1[1]),r2=Math.hypot(px-s2[0],py-s2[1]);
+      let v=Math.cos(2*Math.PI*(r1/lam-P.f*S.t))/Math.sqrt(1+r1/70);
+      if(two)v+=Math.cos(2*Math.PI*(r2/lam-P.f*S.t))/Math.sqrt(1+r2/70);
+      v/=two?1.7:1;v=Math.max(-1,Math.min(1,v));
+      const a=Math.pow(Math.abs(v),.85),t=v>0?pl:te;
+      d[i++]=bg[0]+(t[0]-bg[0])*a;d[i++]=bg[1]+(t[1]-bg[1])*a;d[i++]=bg[2]+(t[2]-bg[2])*a;d[i++]=255;
+    }
+    S.oc.putImageData(S.img,0,0);g.imageSmoothingEnabled=true;g.drawImage(S.off,0,0,W,H);
+    const dot=(p)=>{g.fillStyle=C.lime;g.beginPath();g.arc(p[0],p[1],9,0,7);g.fill();g.strokeStyle=C.ink;g.lineWidth=3;g.stroke()};
+    dot(s1);if(two)dot(s2);
+    if(two){g.strokeStyle=C.ink;g.lineWidth=2;g.setLineDash([4,5]);g.beginPath();g.moveTo(34,s1[1]);g.lineTo(34,s2[1]);g.stroke();g.setLineDash([]);txt(g,f1(P.d)+' см',24,200+4,{s:12,a:'right',c:C.ink,w:600})}
+  },
+  outs(S,P){const two=P.mode==='2';return[['Скорость волны',f1(P.lam*P.f)+' см/с'],['Период',f1(1/P.f,2)+' с'],['Направлений усиления',two?String(2*Math.floor(P.d/P.lam)+1):'нет'],['Разность хода даёт',two?'усиление и гашение':'просто волну']]}
+});
+
+/* 8. Закон Ома */
+LABS.push({
+  id:'ohm',title:'Закон Ома и цепи',cat:'Электричество',color:'#D0752B',
+  short:'Как ток зависит от напряжения и сопротивления. Соберите цепь последовательно или параллельно.',
+  params:[
+    {id:'U',label:'Напряжение источника',min:1,max:24,step:0.5,val:12,unit:'В',d:1},
+    {id:'R1',label:'Сопротивление R₁',min:1,max:50,step:1,val:10,unit:'Ом'},
+    {id:'R2',label:'Сопротивление R₂',min:1,max:50,step:1,val:20,unit:'Ом'},
+    {id:'mode',label:'Соединение',type:'seg',val:'s',options:[['s','Последовательное'],['p','Параллельное']]}
+  ],
+  presets:[['Одинаковые R',{R1:20,R2:20}],['Большой ток',{U:24,R1:2,R2:2}],['Слабый ток',{U:3,R1:50,R2:50}]],
+  restartOn:[],
+  def:'Сила тока в участке цепи прямо пропорциональна напряжению и обратно пропорциональна сопротивлению. При последовательном соединении ток один, а сопротивления складываются. При параллельном одинаково напряжение, а токи складываются.',
+  formulas:['I = U / R','последовательно: R = R₁ + R₂','параллельно: 1/R = 1/R₁ + 1/R₂','P = U · I'],
+  tryit:['Увеличьте напряжение вдвое: что будет с током?','Сравните общее сопротивление при разных соединениях при R₁ = R₂.','В какой цепи сильнее нагревается меньший резистор?'],
+  init(S){S.s=[0,0]},
+  calc(P){
+    if(P.mode==='s'){const R=P.R1+P.R2,I=P.U/R;return{R,I,I1:I,I2:I,U1:I*P.R1,U2:I*P.R2}}
+    const R=P.R1*P.R2/(P.R1+P.R2),I1=P.U/P.R1,I2=P.U/P.R2;return{R,I:I1+I2,I1,I2,U1:P.U,U2:P.U}
+  },
+  step(S,P,dt){const c=this.calc(P);S.s[0]+=dt*(20+40*Math.sqrt(c.I1));S.s[1]+=dt*(20+40*Math.sqrt(c.I2))},
+  draw(g,S,P){
+    const c=this.calc(P),ser=P.mode==='s';
+    const paths=ser?[[[90,300],[90,100],[570,100],[570,300],[90,300]]]:[[[90,300],[90,100],[300,100],[300,300],[90,300]],[[90,300],[90,100],[480,100],[480,300],[90,300]]];
+    // провода
+    g.strokeStyle=C.ink;g.lineWidth=4;g.lineJoin='round';g.lineCap='round';
+    for(const p of paths){g.beginPath();p.forEach((q,i)=>i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1]));g.stroke()}
+    // батарея
+    g.fillStyle=C.surf;g.fillRect(60,176,60,48);
+    g.lineWidth=5;g.beginPath();g.moveTo(70,188);g.lineTo(110,188);g.stroke();g.lineWidth=5;g.beginPath();g.moveTo(80,212);g.lineTo(100,212);g.stroke();
+    txt(g,'+',124,194,{s:20,w:800,c:C.plum});txt(g,'−',124,222,{s:20,w:800,c:C.muted});
+    txt(g,f1(P.U,P.U%1?1:0)+' В',56,204,{s:15,a:'right',w:700});
+    // резисторы
+    const heat=(I,R)=>Math.min(1,0.15+I*I*R/70);
+    const res=(x,y,w,h,label,hv)=>{g.fillStyle=C.surf;g.fillRect(x,y,w,h);g.fillStyle=rgba('#F39C3D',hv);g.beginPath();g.roundRect(x,y,w,h,8);g.fill();g.strokeStyle=C.ink;g.lineWidth=3;g.stroke()};
+    if(ser){
+      res(210,84,90,32,'',heat(c.I1,P.R1));res(390,84,90,32,'',heat(c.I2,P.R2));
+      txt(g,'R₁ = '+P.R1+' Ом',255,72,{a:'center',s:14,w:700});txt(g,'R₂ = '+P.R2+' Ом',435,72,{a:'center',s:14,w:700});
+    }else{
+      res(285,170,30,66,'',heat(c.I1,P.R1));res(465,170,30,66,'',heat(c.I2,P.R2));
+      txt(g,'R₁ = '+P.R1+' Ом',322,208,{s:14,w:700});txt(g,'R₂ = '+P.R2+' Ом',502,208,{s:14,w:700});
+    }
+    // электроны/заряды
+    paths.forEach((p,pi)=>{
+      const segs=[];let L=0;for(let i=0;i<p.length-1;i++){const l=Math.hypot(p[i+1][0]-p[i][0],p[i+1][1]-p[i][1]);segs.push([p[i],p[i+1],l,L]);L+=l}
+      const sp=26,n=Math.floor(L/sp),off=S.s[ser?0:pi];
+      g.fillStyle=C.lime;
+      for(let k=0;k<n;k++){let d=(k*sp+off)%L;const sg=segs.find(s=>d>=s[3]&&d<s[3]+s[2])||segs[0];const t=(d-sg[3])/sg[2];
+        g.beginPath();g.arc(sg[0][0]+(sg[1][0]-sg[0][0])*t,sg[0][1]+(sg[1][1]-sg[0][1])*t,5.5,0,7);g.fill();g.strokeStyle=C.ink;g.lineWidth=1.5;g.stroke()}
+    });
+    txt(g,'I = '+f1(c.I,2)+' А',W-16,H-16,{a:'right',s:18,w:800});
+  },
+  outs(S,P){const c=this.calc(P),ser=P.mode==='s';return[['Общее сопротивление',f1(c.R,2)+' Ом'],['Общая сила тока',f1(c.I,2)+' А'],[ser?'Напряжения U₁ / U₂':'Токи I₁ / I₂',ser?f1(c.U1)+' / '+f1(c.U2)+' В':f1(c.I1,2)+' / '+f1(c.I2,2)+' А'],['Мощность',f1(P.U*c.I)+' Вт']]}
+});
+
+function LABC(lab){return lab.color}
+
+/* ===================== APP ===================== */
+const app=$('#app');
+let visited=new Set();
+try{visited=new Set(JSON.parse(localStorage.getItem('lab-sirius-visited')||'[]'))}catch(e){}
+function saveVisited(){try{localStorage.setItem('lab-sirius-visited',JSON.stringify([...visited]))}catch(e){}}
+
+const CATS=['Все',...Array.from(new Set(LABS.map(l=>l.cat)))];
+let filter='Все',cur=null,P={},S={},paused=false,raf=0,last=0,outT=0,cv=null,g=null;
+
+const logoSVG='<svg viewBox="0 0 50 36" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" style="color:var(--brand)"><path d="M3 4h16c3 0 6 2 6 5v23c0-3-3-5-6-5H3z"/><path d="M47 4H31c-3 0-6 2-6 5v23c0-3 3-5 6-5h16z"/></svg>';
+function header(){return `<header class="top"><button class="logo" data-act="home" aria-label="На главную">${logoSVG}<div><b>Лаборатория</b><span> Сириус</span></div></button></header>`}
+
+function home(){
+  stop();cur=null;
+  const done=LABS.filter(l=>visited.has(l.id)).length;
+  app.innerHTML=header()+`
+  <section class="hero"><h1>Физические явления</h1><p>Запускайте опыты, меняйте параметры и смотрите, как работает физика.</p></section>
+  <div class="progress"><span>Изучено ${done} из ${LABS.length}</span><div class="bar"><i style="width:${done/LABS.length*100}%"></i></div></div>
+  <div class="chips" role="group" aria-label="Разделы">${CATS.map(c=>`<button class="chip" data-cat="${c}" aria-pressed="${c===filter}">${c}</button>`).join('')}</div>
+  <div class="cards">${LABS.filter(l=>filter==='Все'||l.cat===filter).map(l=>`
+    <button class="card ${visited.has(l.id)?'seen':''}" style="--c:${l.color}" data-lab="${l.id}">
+      <div class="pb"><i></i></div>
+      <span class="tag">${l.cat}</span>
+      <h2>${l.title}</h2><p>${l.short}</p>
+      <div class="foot"><span class="meta">Параметров: ${l.params.length}</span><span class="go">Открыть</span></div>
+    </button>`).join('')}</div>`;
+  window.scrollTo(0,0);
+}
+
+function fmtVal(p,v){const d=p.d!==undefined?p.d:(p.step<1?1:0);return f1(v,d)+(p.unit?' '+p.unit:'')}
+
+function openLab(id){
+  stop();cur=LABS.find(l=>l.id===id);visited.add(id);saveVisited();paused=false;
+  P={};cur.params.forEach(p=>P[p.id]=p.val);S={};cur.init(S,P);
+  const l=cur;
+  app.innerHTML=header()+`
+  <section class="labhead" style="--lab:${l.color}">
+    <button class="back" data-act="home"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg>Все явления</button>
+    <h1>${l.title}</h1><p>${l.short}</p><span class="tag">${l.cat}</span>
+  </section>
+  <main class="sheet" style="--lab:${l.color}">
+    <div class="stage"><canvas id="cv" aria-label="Интерактивная модель: ${l.title}"></canvas></div>
+    <div class="tools">
+      ${l.launch?'<button class="btn main" data-act="restart">Запустить снова</button>':''}
+      <button class="btn ${l.launch?'':'main'}" data-act="pause">Пауза</button>
+      <button class="btn" data-act="reset">Сбросить параметры</button>
+    </div>
+    <div class="outs" id="outs"></div>
+    <h2>Настрой опыт</h2>
+    ${l.presets?`<div class="presets">${l.presets.map((p,i)=>`<button class="chip" data-preset="${i}">${p[0]}</button>`).join('')}</div>`:''}
+    <div id="ctls">${l.params.map(controlHTML).join('')}</div>
+    <div class="note"><b>Явление.</b> ${l.def}</div>
+    <div class="note f"><b>Формулы</b>${l.formulas.map(f=>`<div class="fm">${f}</div>`).join('')}</div>
+    <div class="note f"><b>Попробуйте сами</b><ol>${l.tryit.map(t=>`<li>${t}</li>`).join('')}</ol></div>
+  </main>`;
+  cv=$('#cv');g=cv.getContext('2d');sizeCanvas();readColors();
+  window.scrollTo(0,0);updateOuts();
+  last=performance.now();raf=requestAnimationFrame(loop);
+}
+function controlHTML(p){
+  if(p.type==='seg')return `<div class="ctl"><div class="r"><span>${p.label}</span></div><div class="seg" data-seg="${p.id}">${p.options.map(o=>`<button data-v="${o[0]}" aria-pressed="${o[0]===P[p.id]}">${o[1]}</button>`).join('')}</div></div>`;
+  return `<div class="ctl"><label class="r" for="p_${p.id}"><span>${p.label}</span><span class="val" id="v_${p.id}">${fmtVal(p,p.val)}</span></label><input type="range" id="p_${p.id}" data-p="${p.id}" min="${p.min}" max="${p.max}" step="${p.step}" value="${p.val}"></div>`;
+}
+function syncControls(){
+  cur.params.forEach(p=>{
+    if(p.type==='seg'){document.querySelectorAll(`[data-seg="${p.id}"] button`).forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===P[p.id]))}
+    else{const el=$('#p_'+p.id);if(el){el.value=P[p.id];$('#v_'+p.id).textContent=fmtVal(p,P[p.id])}}
+  });
+}
+function changed(id){
+  const r=cur.restartOn;
+  if(r==='all'||(Array.isArray(r)&&r.includes(id)))cur.init(S,P);
+}
+function sizeCanvas(){
+  if(!cv)return;const dpr=Math.min(window.devicePixelRatio||1,2.5),w=cv.clientWidth||W;
+  cv.width=Math.round(w*dpr);cv.height=Math.round(w*dpr*H/W);g.setTransform(cv.width/W,0,0,cv.width/W,0,0);
+}
+function updateOuts(){
+  if(!cur)return;const o=$('#outs');if(!o)return;
+  o.innerHTML=cur.outs(S,P).map(x=>`<div class="out"><small>${x[0]}</small><b>${x[1]}</b></div>`).join('');
+}
+function loop(ts){
+  if(!cur)return;
+  const dt=Math.min(.033,(ts-last)/1000);last=ts;
+  if(!paused)cur.step(S,P,dt);
+  readColors();
+  g.clearRect(0,0,W,H);g.fillStyle=C.surf;g.fillRect(0,0,W,H);
+  cur.draw(g,S,P);
+  outT+=dt;if(outT>.2){outT=0;updateOuts()}
+  raf=requestAnimationFrame(loop);
+}
+function stop(){cancelAnimationFrame(raf);raf=0}
+
+app.addEventListener('click',e=>{
+  const t=e.target.closest('button');if(!t)return;
+  if(t.dataset.act==='home'){home();return}
+  if(t.dataset.cat){filter=t.dataset.cat;home();return}
+  if(t.dataset.lab){openLab(t.dataset.lab);return}
+  if(!cur)return;
+  if(t.dataset.act==='pause'){paused=!paused;t.textContent=paused?'Продолжить':'Пауза';return}
+  if(t.dataset.act==='restart'){cur.init(S,P);paused=false;const pb=$('[data-act="pause"]');if(pb)pb.textContent='Пауза';return}
+  if(t.dataset.act==='reset'){cur.params.forEach(p=>P[p.id]=p.val);cur.init(S,P);syncControls();updateOuts();return}
+  if(t.dataset.preset!==undefined){Object.assign(P,cur.presets[+t.dataset.preset][1]);cur.init(S,P);syncControls();updateOuts();return}
+  const seg=t.closest('[data-seg]');
+  if(seg){P[seg.dataset.seg]=t.dataset.v;syncControls();changed(seg.dataset.seg);updateOuts()}
+});
+app.addEventListener('input',e=>{
+  const el=e.target;if(!el.dataset.p||!cur)return;
+  const p=cur.params.find(x=>x.id===el.dataset.p);P[p.id]=parseFloat(el.value);
+  $('#v_'+p.id).textContent=fmtVal(p,P[p.id]);changed(p.id);
+});
+window.addEventListener('resize',sizeCanvas);
+if(window.ResizeObserver)new ResizeObserver(sizeCanvas).observe(document.body);
+document.addEventListener('visibilitychange',()=>{last=performance.now()});
+
+home();
+})();
+</script>
+</body>
+</html>
